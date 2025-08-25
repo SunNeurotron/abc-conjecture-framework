@@ -5,7 +5,7 @@
 \geometry{margin=1in}
 \usepackage{hyperref}
 \usepackage{graphicx}
-\usepackage{booktabs} % tablas profesionales
+\usepackage{booktabs}
 \usepackage{caption}
 
 \title{Scalable Selmer-like Framework for the ABC Conjecture: \\ A Computational and Structural Approach (Final Revised Edition)}
@@ -26,13 +26,16 @@
 \begin{document}
 
 \maketitle
+
 \begin{abstract}
 We present a structural and computational framework for analyzing the ABC conjecture, reformulated in terms of Diophantine heights. We introduce a computable, Selmer-like condition based on p-adic ramification depth, filtering ABC triples. A large-scale analysis on over 60 million generated triples and 241 known high-quality triples (q $\geq$ 1.4) from established databases (de Smit \cite{desmit}) reveals a clear "exclusion zone" for high quality and low complexity. Statistical claims are validated using bootstrap resampling techniques, and we contrast our computable approach with recent IUT-related discussions (Mochizuki \cite{mochizuki2021}; Joshi \cite{joshi2025}). Connecting empirical findings to the Szpiro conjecture via Frey-Hellegouarch curves frames the problem in arithmetic geometry and outlines a path toward formal proof through computable local conditions.
 \end{abstract}
+
 \tableofcontents
 \bigskip
 
 \section{Introduction}
+
 \begin{conjecture}[ABC Conjecture]
 For any $\epsilon > 0$, there exists a constant $C_\epsilon > 0$ such that for all coprime integers $a, b, c$ satisfying $a+b=c$, the inequality holds:
 \[
@@ -40,10 +43,12 @@ For any $\epsilon > 0$, there exists a constant $C_\epsilon > 0$ such that for a
 \]
 where $\rad(n) = \prod_{p\mid n,\, p \text{ prime}} p$.
 \end{conjecture}
+
 \subsection{Related Work}
 As of 2025 the conjecture remains open. Shinichi Mochizuki's Inter-Universal Teichmüller Theory (IUT) continues to prompt debate (Mochizuki \cite{mochizuki2021}; Scholze \& Stix \cite{scholze2022}), and Kirti Joshi's May 2025 update \cite{joshi2025} provides targeted commentary. Recent probabilistic and exceptional-set results (Teräväinen \cite{teravainen2025}; Browning et al. \cite{browning2025}) establish complementary "almost always" versions. Our contribution is a computable, structural local condition that is directly verifiable and complements these theoretical directions.
 
 \section{Theoretical Framework}
+
 \subsection{Heights and Normalization}
 \begin{definition}
 Let $P=[a:c]\in\Pp^1(\Q)$ correspond to coprime $(a,c)$. Define:
@@ -55,6 +60,7 @@ Let $P=[a:c]\in\Pp^1(\Q)$ correspond to coprime $(a,c)$. Define:
 \begin{remark}
 We normalize triples so that $a,b,c>0$ and $c=\max(a,b,c)$. Then $h(a/c)=\log(c)$ and quality $q=\log(c)/\log(\rad(abc))$.
 \end{remark}
+
 \subsection{Selmer-like Condition}
 \begin{definition}
 For $(a,b,c)$, let $S=\{p\mid p|abc\}$. For $x=a/c$ define the exponent vector $\nu(x)=(\nu_p(x))_{p\in S}\in\bigoplus_{p\in S}\Z$.
@@ -66,14 +72,17 @@ The Ramification Depth is
 \]
 \end{definition}
 \begin{definition}
-For threshold $r\ge1$, the Kummer-Selmer set is $\Sel_{ABC}(S,r)=\{(a,b,c)\mid \rho(a,b,c)\le r\}$.
-\end{{definition}
+For threshold $r\ge1$, the Kummer-Selmer set at level $r$ is
+\[
+\Sel_{ABC}(S,r)=\{(a,b,c)\mid \rho(a,b,c)\le r\}.
+\]
+\end{definition}
 
 \section{Computational Methodology}
 \subsection{Dataset and Generation}
-The primary dataset comprises $n=60{,}795{,}197$ generated primitive triples. Generation details: $a,b$ sampled up to $10^{12}$ with $\gcd(a,b)=1$, $c=a+b$, and pairwise coprimality enforced. We also imported 241 known high-quality triples (q $\ge 1.4$) from de Smit's database \cite{desmit}.
+The primary dataset comprises $n=60{,}795{,}197$ generated primitive triples. Generation details: integers $a,b$ sampled up to $10^{12}$ with $\gcd(a,b)=1$, $c=a+b$, and pairwise coprimality enforced. We also imported 241 known high-quality triples (q $\ge 1.4$) from de Smit's database \cite{desmit}.
 \subsection{Computation of \(\rho\) for Curated Hits}
-For the 241 curated hits, we performed exact computations using PARI/GP (\texttt{factor}) and deterministic algorithms.
+For the 241 curated hits, we performed exact computations using PARI/GP (\texttt{factor}) and deterministic algorithms. The results are available in a supplemental CSV.
 \subsection{Scalable Processing (Bulk Dataset)}
 Bulk computation strategy: data stored in Parquet, processed with Dask pipelines, using PARI/GP for optimized factorization.
 \subsection{Statistical Validation}
@@ -129,7 +138,7 @@ $5\cdot7^3 + \dots = \dots$ & 1.6206 & 20 & de Koninck--Luca \\
 \begin{definition}
 Associate to $(a,b,c)$ the Frey--Hellegouarch curve $E_{a,b}: y^2 = x(x-a)(x+b)$.
 \end{definition}
-\begin{theorem}[Relation of invariants]
+\begin{theorem}[Relation of Invariants]
 The conductor $N_E=\rad(abc)$ (up to local correction) and the minimal discriminant $|\Delta_E|$ and $(abc)^2$ differ by a factor depending only on primes of bad reduction.
 \end{theorem}
 \begin{conjecture}[Szpiro]
@@ -137,7 +146,7 @@ For any elliptic curve $E/\Q$, $\log|\Delta_E| \le (6+\epsilon)\log(N_E) + \math
 \end{conjecture}
 
 \section{Conclusion and Future Work}
-We provided a computable Selmer-like framework and large-scale empirical evidence that high-quality ABC triples require large ramification depth. The dataset and codebase support reproducibility. As illustrated in Figure \ref{fig:impact_map}, our Selmer-Adelic approach serves as a hub connecting computational results with deep theoretical problems in arithmetic geometry.
+We provided a computable Selmer-like framework and large-scale empirical evidence that high-quality ABC triples require large ramification depth. The dataset and codebase support reproducibility. As illustrated in Figure \ref{fig:impact_map}, our Selmer-Adelic approach serves as a hub connecting computational results with deep theoretical problems.
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../figures/impact_map.png}
