@@ -146,14 +146,42 @@ For any elliptic curve $E/\Q$, $\log|\Delta_E| \le (6+\epsilon)\log(N_E) + \math
 \end{conjecture}
 
 \section{Conclusion and Future Work}
-We provided a computable Selmer-like framework and large-scale empirical evidence that high-quality ABC triples require large ramification depth. The dataset and codebase support reproducibility. As illustrated in Figure \ref{fig:impact_map}, our Selmer-Adelic approach serves as a hub connecting computational results with deep theoretical problems.
+
+We provided a computable Selmer-like framework and large-scale empirical evidence that high-quality ABC triples require large ramification depth. The dataset and codebase (supplemental repository) support reproducibility.
+
+The framework presented herein not only provides strong empirical evidence for the structure of ABC triples but also opens several promising avenues for future research. As illustrated in Figure \ref{fig:impact_map}, our Selmer-Adelic approach serves as a hub connecting computational results with deep theoretical problems in arithmetic geometry.
+
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{../figures/impact_map.png}
-    \caption{Impact Map of the Selmer-Adelic Framework.}
+    % NOTE: The image file 'impact_map.png' must be generated with English text in the nodes.
+    \includegraphics[width=0.9\textwidth]{../figures/impact_map.png}
+    \caption{Impact Map of the Selmer-Adelic Framework for the ABC Conjecture, illustrating the connections between the proposed framework and various research areas in number theory and related fields.}
     \label{fig:impact_map}
 \end{figure}
-Future work will focus on three main directions: deepening the theoretical framework (Arakelov bounds, BSD connection), scaling the computational approach (number fields, ML models), and broadening the interdisciplinary dialogue (IUT, complexity theory).
+
+Future work will focus on formalizing and exploring these connections, which can be grouped into three main directions:
+
+\begin{itemize}
+    \item \textbf{Deepening the Theoretical Framework:}
+        \begin{itemize}
+            \item Formalize Arakelov bounds linking ramification depth $\rho$ to Diophantine heights, providing a theoretical basis for the exclusion zone (exploring the 'Computational Arakelov Geometry' node).
+            \item Investigate the structural relationship between the Szpiro conjecture and the Birch and Swinnerton-Dyer (BSD) conjecture through the lens of our computable invariants (the 'Szpiro-BSD Connection' node).
+            \item Generalize the framework to other significant Diophantine equations, treating this work as a foundational case study (the 'Generalized Selmer Theory' node).
+        \end{itemize}
+
+    \item \textbf{Scaling and Extending the Computational Approach:}
+        \begin{itemize}
+            \item Extend the analysis to non-primitive triples and number fields.
+            \item Incorporate outputs from distributed search projects like ABC@Home to further expand the dataset.
+            \item Apply machine learning models to predict ramification depth and identify promising search areas for high-quality triples.
+        \end{itemize}
+
+    \item \textbf{Broadening the Contextual and Interdisciplinary Dialogue:}
+        \begin{itemize}
+            \item Continue to contrast our computable, structural approach with developments in anabelian geometry and IUT-related proposals (Joshi \cite{joshi2025}; Mochizuki \cite{mochizuki2021}).
+            \item Explore potential interdisciplinary links to areas such as algorithmic complexity and cryptography, where the structure of integer solutions is paramount (the 'Interdisciplinary Connections' node).
+        \end{itemize}
+\end{itemize}
 
 \appendix
 \section{Supplemental Materials}
