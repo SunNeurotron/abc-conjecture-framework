@@ -3,7 +3,7 @@ import networkx as nx
 import numpy as np
 import os
 
-FIGURE_DIR = "/app/figures"
+FIGURE_DIR = "../figures"
 
 def create_abc_universe_map():
     """Generates and saves the 'Quality vs. Ramification' figure."""
