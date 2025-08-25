@@ -18,8 +18,8 @@ This repository is organized to ensure full reproducibility of our research.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/$GITHUB_USERNAME/$REPO_NAME.git
-    cd $REPO_NAME
+    git clone https://github.com/CMT-Research/abc-conjecture-framework.git
+    cd abc-conjecture-framework
     ```
 
 2.  **Generate the figures:**
@@ -59,7 +59,7 @@ If you use this project in your research, please cite our work. Here is a BibTeX
   year         = {2025},
   publisher    = {GitHub},
   journal      = {GitHub repository},
-  howpublished = {\\url{https://github.com/$GITHUB_USERNAME/$REPO_NAME}}
+  howpublished = {\\url{https://github.com/CMT-Research/abc-conjecture-framework}}
 }
 ```
 ---

@@ -30,7 +30,7 @@ def create_abc_universe_map():
 
     plt.savefig(os.path.join(FIGURE_DIR, 'quality_vs_rho.png'), dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print("  - Figura 'quality_vs_rho.png' creada.")
+    print("  - Figure 'quality_vs_rho.png' created.")
 
 def create_height_plane():
     """Generates and saves the 'Height Plane' figure."""
@@ -53,7 +53,7 @@ def create_height_plane():
 
     plt.savefig(os.path.join(FIGURE_DIR, 'height_plane.png'), dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print("  - Figura 'height_plane.png' creada.")
+    print("  - Figure 'height_plane.png' created.")
 
 def create_impact_map():
     """Generates and saves the 'Impact Map' figure."""
@@ -65,7 +65,7 @@ def create_impact_map():
     G.add_node(center_node)
 
     impact_nodes = [
-        "Generalized Selmer Theory\n(Other Diophantine Problems)", "Computational\nArakelov Geometry",
+        "Generalized Selmer Theory\n(Other Diophantine Probs.)", "Computational\nArakelov Geometry",
         "Szpiro-BSD Connection", "Local-Global Phenomena\n(Exclusion Zone)",
         "Computational\nLanglands Program", "Interdisciplinary Connections\n(Complexity, Cryptography)"
     ]
@@ -83,11 +83,11 @@ def create_impact_map():
 
     plt.savefig(os.path.join(FIGURE_DIR, 'impact_map.png'), dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print("  - Figura 'impact_map.png' creada.")
+    print("  - Figure 'impact_map.png' created.")
 
 if __name__ == '__main__':
     os.makedirs(FIGURE_DIR, exist_ok=True)
     create_abc_universe_map()
     create_height_plane()
     create_impact_map()
-    print("\n✅ Todas las figuras han sido generadas en la carpeta 'figures'.")
+    print("\n✅ All figures have been generated in the 'figures' folder.")
