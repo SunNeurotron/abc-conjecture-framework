@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: "CMT Research System / AI Collaboration"
+title: "Scalable Selmer-like Framework for the ABC Conjecture: A Computational and Structural Approach"
+version: 1.0.0
+date-released: 2025-08-25
+repository-code: "https://github.com/CMT-Research/abc-conjecture-framework"
