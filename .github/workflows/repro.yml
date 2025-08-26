@@ -1,0 +1,49 @@
+name: Reproducibility CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate figures
+        run: |
+          python code/generate_figures.py
+      - name: Upload figures as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: figures
+          path: figures/
+
+      - name: Setup TeX Live
+        uses: dante-ev/texlive-action@v2
+        with:
+          profile: small
+
+      - name: Compile LaTeX
+        run: |
+          cd paper
+          latexmk -pdf -silent main.tex
+
+      - name: Upload paper PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: paper/main.pdf

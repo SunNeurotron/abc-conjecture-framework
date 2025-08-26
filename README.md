@@ -108,6 +108,12 @@ If you use this project in your research, please cite our work. Here is a BibTeX
 
 ---
 
+## Provenance and Reproducibility
+
+The file `data/provenance.csv` (when available) records for every curated triple the factorization provenance: method (exact/partial/heuristic), tool (PARI/GP, msieve, yafu), tool version, and validation date. See `data/validation_results.csv` for the independent 100k-sample validation performed on YYYY-MM-DD.
+
+---
+
 ## Contact & Contributions
 
 If you want me to:
