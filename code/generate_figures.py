@@ -1,93 +1,160 @@
-import matplotlib.pyplot as plt
-import networkx as nx
+import math
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from collections import Counter
+import csv
 import os
 
-FIGURE_DIR = "../figures"
+# ==============================================================================
+# MÓDULO 1: HERRAMIENTAS DE TEORÍA DE NÚMEROS
+# ==============================================================================
 
-def create_abc_universe_map():
-    """Generates and saves the 'Quality vs. Ramification' figure."""
-    plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(12, 8))
+def get_prime_factorization(n):
+    if n == 0: return Counter({0: 1})
+    n = abs(n)
+    factors = Counter()
+    d = 2
+    temp_n = n
+    while d * d <= temp_n:
+        while temp_n % d == 0:
+            factors[d] += 1
+            temp_n //= d
+        d += 1
+    if temp_n > 1:
+        factors[temp_n] += 1
+    return factors
 
-    np.random.seed(42)
-    rho_cloud = np.random.randint(1, 15, size=5000)
-    q_cloud = 0.5 + np.random.randn(5000) * 0.1 / np.sqrt(rho_cloud)
-    ax.scatter(rho_cloud, q_cloud, color='blue', alpha=0.1, label='Generated Triples (Sample)')
+def radical_from_factors(factors_a, factors_b, factors_c):
+    all_primes = set(factors_a.keys()) | set(factors_b.keys()) | set(factors_c.keys())
+    return math.prod(all_primes) if all_primes else 1
 
-    rho_hits = [4, 6, 8, 5, 7, 10, 12, 20]
-    q_hits = [1.45, 1.48, 1.52, 1.55, 1.58, 1.63, 1.42, 1.62]
-    ax.scatter(rho_hits, q_hits, color='red', edgecolor='black', s=100, label='Known High-Quality Hits (q > 1.4)')
+def quality_q_from_factors(c, factors_a, factors_b, factors_c):
+    rad_abc = radical_from_factors(factors_a, factors_b, factors_c)
+    if rad_abc <= 1:
+        return float('inf') if c > 1 else 0
+    return math.log(c) / math.log(rad_abc)
 
-    ax.add_patch(plt.Rectangle((0, 1.4), 4, 0.3, color='red', alpha=0.1, linestyle='--', label='Empirical Exclusion Zone'))
+def calculate_formal_rho(factors_a, factors_b, factors_c):
+    all_primes = set(factors_a.keys()) | set(factors_b.keys()) | set(factors_c.keys())
+    max_rho = 0
+    if not all_primes:
+        return 0
+    for p in all_primes:
+        v_p_a = factors_a.get(p, 0)
+        v_p_b = factors_b.get(p, 0)
+        v_p_c = factors_c.get(p, 0)
+        rho_p_ac = abs(v_p_a - v_p_c)
+        rho_p_bc = abs(v_p_b - v_p_c)
+        max_rho = max(max_rho, rho_p_ac, rho_p_bc)
+    return max_rho
 
-    ax.set_title('The ABC Universe Map: Quality vs. Ramification Depth', fontsize=16)
-    ax.set_xlabel('Ramification Depth (ρ)', fontsize=12)
-    ax.set_ylabel('Quality (q)', fontsize=12)
-    ax.set_xlim(0, 22)
-    ax.set_ylim(0, 1.8)
-    ax.legend()
+# ==============================================================================
+# MÓDULO 2: GENERADOR DE TERNAS
+# ==============================================================================
 
-    plt.savefig(os.path.join(FIGURE_DIR, 'quality_vs_rho.png'), dpi=150, bbox_inches='tight')
-    plt.close(fig)
-    print("  - Figure 'quality_vs_rho.png' created.")
+def generate_abc_triples_optimized(c_limit, output_csv):
+    print(f"Iniciando generación de ternas ABC hasta c = {c_limit}, guardando en {output_csv}...")
+    os.makedirs(os.path.dirname(output_csv), exist_ok=True)
+    with open(output_csv, 'w', newline='') as csvfile:
+        fieldnames = ['a', 'b', 'c', 'Quality (q)', 'Profundidad de Ramificación (ρ)']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        count = 0
+        for a in range(1, c_limit // 2 + 1):
+             for c in range(a + 1, c_limit + 1):
+                 b = c - a
+                 if a < b and math.gcd(a, b) == 1:
+                     factors_a = get_prime_factorization(a)
+                     factors_b = get_prime_factorization(b)
+                     factors_c = get_prime_factorization(c)
+                     q = quality_q_from_factors(c, factors_a, factors_b, factors_c)
+                     ramification_depth = calculate_formal_rho(factors_a, factors_b, factors_c)
+                     writer.writerow({
+                         'a': a, 'b': b, 'c': c,
+                         'Quality (q)': q if q is not None else 'NaN',
+                         'Profundidad de Ramificación (ρ)': ramification_depth
+                     })
+                     count += 1
+                     if count % 500000 == 0:
+                         print(f"  ... {count} ternas analizadas y guardadas.")
+    print(f"\nGeneración completada. Total de {count} ternas guardadas en {output_csv}.")
+    return output_csv
 
-def create_height_plane():
-    """Generates and saves the 'Height Plane' figure."""
-    plt.style.use('seaborn-v0_8-whitegrid')
-    fig, ax = plt.subplots(figsize=(8, 8))
+# ==============================================================================
+# MÓDULO 3: EXPERIMENTO PRINCIPAL
+# ==============================================================================
 
-    np.random.seed(42)
-    h_ram = np.random.rand(5000) * 30 + 5
-    h_weil = h_ram - 2 + np.random.randn(5000) * 2
+def run_abc_experiment(c_limit=20000, quality_threshold=1.4, output_csv='../data/abc_triples_analysis.csv'):
+    generated_csv_path = generate_abc_triples_optimized(c_limit, output_csv)
+    print(f"Cargando datos desde {generated_csv_path} para visualización...")
+    try:
+        df = pd.read_csv(generated_csv_path)
+        df['Quality (q)'] = pd.to_numeric(df['Quality (q)'], errors='coerce')
+        df.dropna(subset=['Quality (q)'], inplace=True)
+        df = df[df['Quality (q)'] != float('inf')]
+    except FileNotFoundError:
+        print(f"ERROR: No se encontró {generated_csv_path}.")
+        return
+    if df.empty:
+        print("DataFrame vacío, no hay datos para visualizar.")
+        return
+    print(f"Datos cargados. Filas para visualización: {len(df)}")
+    notable_hits = df[df['Quality (q)'] > quality_threshold].sort_values(by='Quality (q)', ascending=False)
+    print(f"\n--- Hits Notables (q > {quality_threshold}) ---")
+    if not notable_hits.empty:
+        print(notable_hits.to_string(index=False))
+    else:
+        print(f"No se encontraron 'hits' con q > {quality_threshold} para c <= {c_limit}.")
+    fig, ax = plt.subplots(figsize=(14, 9))
+    sample_size = 500000
+    df_plot_sample = df.sample(n=min(len(df), sample_size), random_state=42)
+    print(f"Graficando una muestra de {len(df_plot_sample)} ternas.")
+    ax.scatter(
+        df_plot_sample['Profundidad de Ramificación (ρ)'],
+        df_plot_sample['Quality (q)'],
+        alpha=0.3, s=15, color='blue', label=f'Ternas Primitivas (n={len(df)})'
+    )
+    if not notable_hits.empty:
+        ax.scatter(
+            notable_hits['Profundidad de Ramificación (ρ)'],
+            notable_hits['Quality (q)'],
+            color='red', s=50, edgecolors='black', label=f'Hits Notables (q > {quality_threshold}, n={len(notable_hits)})'
+        )
+    max_q = df['Quality (q)'].max() if not df.empty else 2
+    zone_height = max_q + 0.1 - quality_threshold
+    if not notable_hits.empty:
+        rho_min_high_q = notable_hits['Profundidad de Ramificación (ρ)'].min()
+        zone_width = rho_min_high_q
+        print(f"Zona de Exclusión determinada dinámicamente: ρ < {zone_width} para q > {quality_threshold}")
+    else:
+        zone_width = 5
+        print(f"No se encontraron hits. Zona de Exclusión por defecto: ρ < {zone_width} para q > {quality_threshold}")
+    exclusion_zone = patches.Rectangle(
+        (0, quality_threshold), zone_width, zone_height,
+        linewidth=2, linestyle='--', edgecolor='red', facecolor='red', alpha=0.1
+    )
+    ax.add_patch(exclusion_zone)
+    ax.text(
+        zone_width / 2, quality_threshold + zone_height / 2,
+        'Zona de Exclusión\n(Alta Calidad, Baja Complejidad)',
+        color='red', fontsize=12, style='italic', ha='center', va='center'
+    )
+    ax.set_title('El Mapa del Universo ABC: Calidad vs. Complejidad de Ramificación', fontsize=18)
+    ax.set_xlabel('Profundidad de Ramificación (ρ)', fontsize=14)
+    ax.set_ylabel('Calidad (q)', fontsize=14)
+    ax.legend(fontsize=12)
+    ax.grid(True, which='both', linestyle=':', linewidth=0.5)
+    ax.set_xlim(left=0)
+    ax.set_ylim(bottom=0.5)
+    output_figure_path = '../figures/quality_vs_rho.png'
+    os.makedirs(os.path.dirname(output_figure_path), exist_ok=True)
+    plt.savefig(output_figure_path, dpi=300, bbox_inches='tight')
+    print(f"Visualización guardada en {output_figure_path}.")
+    # plt.show() # Disabled for non-interactive environments
 
-    ax.scatter(h_ram, h_weil, alpha=0.2, label='Generated Triples (Sample)')
-    ax.plot([0, 40], [0, 40], 'k--', label='q=1 line (h_weil = h_ram)')
-
-    ax.set_title('The ABC Conjecture in the Height Plane', fontsize=16)
-    ax.set_xlabel('Log-Radical Height h_ram(abc)', fontsize=12)
-    ax.set_ylabel('Weil Height h(a/c)', fontsize=12)
-    ax.set_xlim(0, 40)
-    ax.set_ylim(0, 40)
-    ax.legend()
-
-    plt.savefig(os.path.join(FIGURE_DIR, 'height_plane.png'), dpi=150, bbox_inches='tight')
-    plt.close(fig)
-    print("  - Figure 'height_plane.png' created.")
-
-def create_impact_map():
-    """Generates and saves the 'Impact Map' figure."""
-    plt.style.use('default')
-    fig, ax = plt.subplots(figsize=(14, 10))
-    G = nx.DiGraph()
-
-    center_node = "ABC Conjecture\n(Selmer-Adelic Framework)"
-    G.add_node(center_node)
-
-    impact_nodes = [
-        "Generalized Selmer Theory\n(Other Diophantine Probs.)", "Computational\nArakelov Geometry",
-        "Szpiro-BSD Connection", "Local-Global Phenomena\n(Exclusion Zone)",
-        "Computational\nLanglands Program", "Interdisciplinary Connections\n(Complexity, Cryptography)"
-    ]
-
-    for node in impact_nodes: G.add_edge(center_node, node)
-
-    pos = nx.spring_layout(G, k=1.5, iterations=50, seed=42)
-
-    nx.draw_networkx_nodes(G, pos, node_size=5000, node_color='#ADD8E6', edgecolors='black', ax=ax)
-    nx.draw_networkx_edges(G, pos, node_size=5000, arrowstyle='->', arrowsize=20, edge_color='gray', width=1.5, ax=ax)
-    nx.draw_networkx_labels(G, pos, font_size=10, font_weight='bold', ax=ax)
-
-    ax.set_title("Impact Map of the Selmer-Adelic Framework", fontsize=18, weight='bold')
-    plt.axis('off')
-
-    plt.savefig(os.path.join(FIGURE_DIR, 'impact_map.png'), dpi=150, bbox_inches='tight')
-    plt.close(fig)
-    print("  - Figure 'impact_map.png' created.")
-
-if __name__ == '__main__':
-    os.makedirs(FIGURE_DIR, exist_ok=True)
-    create_abc_universe_map()
-    create_height_plane()
-    create_impact_map()
-    print("\n✅ All figures have been generated in the 'figures' folder.")
+if __name__ == "__main__":
+    C_LIMIT = 20000
+    QUALITY_THRESHOLD = 1.4
+    run_abc_experiment(c_limit=C_LIMIT, quality_threshold=QUALITY_THRESHOLD)
