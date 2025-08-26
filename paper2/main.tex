@@ -1,7 +1,9 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
 \usepackage{hyperref}
 \usepackage{geometry}
 \usepackage{graphicx}
@@ -11,6 +13,23 @@
 \usepackage{natbib}
 
 \geometry{margin=1in}
+
+% Math operators / macros
+\DeclareMathOperator{\rad}{rad}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+
+% PDF metadata
+\hypersetup{
+  pdftitle={A Computational Framework for ABC Triple Analysis},
+  pdfauthor={CMT Research System / AI Collaboration},
+  pdfkeywords={ABC conjecture, p-adic valuation, computational number theory, Selmer},
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
 
 \title{A Computational Framework for ABC Triple Analysis: Local Complexity and Global Patterns}
 \author{CMT Research System / AI Collaboration}
@@ -26,12 +45,12 @@ We present a computational framework for analyzing ABC triples through a novel l
 
 \section{Introduction}
 
-The ABC conjecture, formulated independently by Oesterlé and Masser in the 1980s \citep{oesterle1988abc,masser1988abc}, remains one of the most important unsolved problems in Diophantine analysis.
+The ABC conjecture, formulated independently by Oesterlé and Masser in the 1980s \citep{oesterle1988abc,masser1985abc}, remains one of the most important unsolved problems in Diophantine analysis.
 
 \begin{quote}
 \textbf{Conjecture (ABC):} For any $\varepsilon > 0$, there exists a constant $C_\varepsilon > 0$ such that for all coprime integers $a, b, c$ satisfying $a+b=c$:
 \[
-\max(|a|,|b|,|c|) < C_\varepsilon \cdot \text{rad}(abc)^{1+\varepsilon}.
+\max(|a|,|b|,|c|) < C_\varepsilon \cdot \rad(abc)^{1+\varepsilon}.
 \]
 \end{quote}
 
@@ -67,7 +86,7 @@ The \emph{Local Complexity Index} $\rho(a,b,c)$ is defined as
 \begin{definition}[ABC Quality]
 For a primitive triple $(a,b,c)$, the quality is
 \[
-q(a,b,c) = \frac{\log(\max(a,b,c))}{\log(\text{rad}(abc))}.
+q(a,b,c) = \frac{\log(\max(a,b,c))}{\log(\rad(abc))}.
 \]
 \end{definition}
 
@@ -103,7 +122,7 @@ Potential extensions:
 \begin{enumerate}
     \item Pushing computational ranges further with distributed computing
     \item Exploring ML pattern detection \citep{allen2021abcml}
-    \item Investigating connections with height functions and Vojta’s conjecture \citep{vojta1999abc}
+    \item Investigating connections with height functions and Vojta’s conjecture \citep{vojta1987diophantine}
     \item Testing against recent critiques and updates on Mochizuki’s work \citep{joshi2025abcupdate}
 \end{enumerate}
 
@@ -112,10 +131,42 @@ Potential extensions:
 We presented a scalable computational framework for ABC analysis, introduced a local complexity metric $\rho$, and empirically documented its strong correlation with ABC quality $q$. These findings should be seen as \emph{computational observations}, not theoretical proofs, but they open new avenues for future Diophantine research.
 
 \section*{Acknowledgments}
-We thank Bart de Smit for providing curated data, and acknowledge computational resources from [Institution].
+We acknowledge the invaluable assistance of the following computational and AI tools in the development and analysis of this work:
+\begin{itemize}
+    \item Gemini 2.5 Pro
+    \item Claude Sonnet 4
+    \item ChatGPT 5
+    \item Grok 4
+    \item Google Colab
+    \item Google Jules
+\end{itemize}
+All work was conducted under the supervision of the Corpus Universalium.
+We also thank Bart de Smit for providing curated ABC triple datasets.
 
 \section*{Data and Code Availability}
 All code and datasets are available at: \url{[repository URL]}.
+
+\appendix
+\section*{Provenance of Data and Computational Methods}
+All ABC triples generated in this study are documented with provenance metadata, including:
+\begin{itemize}
+    \item Prime factorization method (PARI/GP heuristics)
+    \item Sampling strategy (systematic or random)
+    \item Computation date and environment
+    \item Versioning of datasets (60M triples and 241 high-quality triples)
+\end{itemize}
+This information ensures reproducibility and enables verification of our empirical analyses.
+
+\section*{Reproducibility}
+The full computational framework, datasets, and scripts are publicly available. To reproduce the results:
+
+\begin{verbatim}
+git clone https://github.com/CMT-Research/abc-conjecture-framework.git
+cd abc-conjecture-framework
+python code/generate_figures.py
+\end{verbatim}
+
+Ensure Python 3 and the required packages (`matplotlib`, `networkx`, `pandas`, etc.) are installed. This reproduces all figures and tables presented in the paper.
 
 \bibliographystyle{apalike}
 \bibliography{abc}
