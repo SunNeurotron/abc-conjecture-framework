@@ -3,4 +3,4 @@ networkx
 numpy
 pandas
 pyparsing
-pypari
+pypari   # optional: remove if not used; keep only tools you actually install on CI

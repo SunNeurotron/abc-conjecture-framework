@@ -108,9 +108,27 @@ If you use this project in your research, please cite our work. Here is a BibTeX
 
 ---
 
-## Provenance and Reproducibility
+## Provenance & Validation
 
-The file `data/provenance.csv` (when available) records for every curated triple the factorization provenance: method (exact/partial/heuristic), tool (PARI/GP, msieve, yafu), tool version, and validation date. See `data/validation_results.csv` for the independent 100k-sample validation performed on YYYY-MM-DD.
+The file `data/provenance.csv` records factorization provenance for curated triples.
+Fields (columns) include:
+
+- `triple_id` — unique identifier for the triple in our dataset
+- `a, b, c` — triple entries
+- `q, rho` — computed quality and local complexity metric
+- `factor_method` — `exact` / `partial` / `heuristic`
+- `factor_tool` — name of tool used (PARI/GP, msieve, yafu, ...)
+- `tool_version` — version string for the tool
+- `date` — validation or factorization date (UTC)
+- `notes` — free-text provenance notes
+
+A validation run over a reproducible sample is stored in `data/validation_results.csv`. Use `tools/generate_provenance_template.py` to create a provenance template from your triples CSV and `tools/validate_sample.py` to run a basic PARI/GP-based validation on a sample.
+
+Example commands:
+```bash
+python tools/generate_provenance_template.py --input data/all_triples.csv --output data/provenance.csv
+python tools/validate_sample.py --input data/samples/sample_100k.csv --output data/validation_results.csv
+````
 
 ---
 
